@@ -1,8 +1,3 @@
-> **Standalone-repo copy of the development notes.** The full toolchain
-> (install script, live test drivers, the sibling Workspace Name applet that
-> duplicates the shared modules) lives in the
-> [cinnamon-monorepo](https://github.com/CurbSoftware/cinnamon-monorepo)
-> `dev-tools/` directory.
 # Workspace Grid Desklet - Development Guide
 
 ## Table of Contents
@@ -105,8 +100,8 @@ unreliable; `pushModal()` takes a stage-wide grab and focuses the entry.
 
 > **Both helper modules are duplicated verbatim in the Workspace Name applet.**
 > Cinnamon gives xlets no way to import across xlet boundaries, so the copies
-> must be kept in sync — the sync check in cinnamon-monorepo's
-> `dev-tools/test-workspace-actions.js` asserts they are byte-identical.
+> must be kept in sync — `dev-tools/test-workspace-actions.js` asserts they are
+> byte-identical.
 
 #### `metadata.json`
 Required metadata file containing:
@@ -525,10 +520,10 @@ These are the rules that keep a workspace edit from taking down the session:
 
 ```bash
 # Headless unit tests - pure logic, no Cinnamon process needed
-gjs test-workspace-actions.js
+gjs dev-tools/test-workspace-actions.js
 
 # Live tests against the running desktop (drives Cinnamon over DBus Eval)
-python3 /path/to/cinnamon-monorepo/dev-tools/live-test-desklet.py
+python3 dev-tools/live-test-desklet.py
 ```
 
 The live driver exercises the full edge-case matrix — add, remove, rename,
