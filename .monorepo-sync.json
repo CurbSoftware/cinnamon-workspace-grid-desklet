@@ -1,0 +1,29 @@
+{
+  "generator": "dev-tools/sync-spice-project.py",
+  "managed_files": {
+    "LICENSE": "68538b8fb86bf1fce73a988c4c663dd599b47e96893d4f3ea14df1991533560d",
+    "README.md": "091299c9ab33e5aec688caa90d51c0521db49909723c0b779bbe2da6cc9b2831",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/desklet.js": "fa6d37159e7b9e6a18c69128473c073f19448ad49ee8a669b502c371e472ac65",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/gridModel.js": "b33df9df28bc3a2d336d78688577953d12ee2c0ea976f764b8954abb83803677",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/icon.png": "ca7b23e4d7f1d3eb22d16633e916f48c0f00d9761b1fdba98cbe595ed504c19f",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/metadata.json": "9e4e7aa892578b1fa505214efadbdf763a464ce605910be6caf6645699be081e",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/po/cinnamon-workspace-grid-desklet@curbsoftware.pot": "4ead7875b036434352971ab12a432b766e98fd37bfb6120655190d1f021eb081",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/previewGeometry.js": "ada44dbbb2f5362732ae9a54e65408af5ef1fd3021b2b6c63dc6616bba13b6dd",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/renameDialog.js": "793ca4c9acb1f5aa75d557fbdc590f2d84965fa9e3486ac51ae73c33e5cbe376",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/settings-schema.json": "1cc45755252490d1371e8203236549f6ff609bb138202ee635d262b592af6892",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/stylesheet.css": "a1adf75f39dfa03303c4c2b320e0c185d5f1487b903a3577d3551816230ebb70",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/workspaceActions.js": "bff355513c52c1305a35e84860eb520cf2c860d9f94d160bac40567b126d55fb",
+    "info.json": "0b8c18a03c477f48e482587029008263efa4c6b4ebfdd292de148674ba3fcf6d",
+    "screenshot.png": "5589d1e43e386f133dc1fb0ebd0330e7d5e4219f080c0fbc44c426cd1fea6b76"
+  },
+  "schema": 1,
+  "source_directory": "cinnamon-workspace-grid-desklet@curbsoftware",
+  "source_repository": "CurbSoftware/cinnamon-monorepo",
+  "source_revision": "a47890062e9a71c093b8118e5bf2c8a2d8737215",
+  "source_worktree_dirty": false,
+  "spice": {
+    "alias": "workspace-grid",
+    "kind": "desklet",
+    "uuid": "cinnamon-workspace-grid-desklet@curbsoftware"
+  }
+}
