@@ -8,6 +8,10 @@ icons. Both modes retain workspace names and active workspace highlighting.
 
 ![Workspace Grid desklet](screenshots/workspace-grid-desklet.webp)
 
+On the desktop:
+
+![Workspace Grid on the desktop](screenshots/fulldesktop-workspace-grid.webp)
+
 The settings window:
 
 ![Workspace Grid settings](screenshots/workspace-grid-config.webp)

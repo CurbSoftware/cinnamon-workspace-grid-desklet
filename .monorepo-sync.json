@@ -2,7 +2,7 @@
   "generator": "dev-tools/sync-spice-project.py",
   "managed_files": {
     "LICENSE": "68538b8fb86bf1fce73a988c4c663dd599b47e96893d4f3ea14df1991533560d",
-    "README.md": "a9c82e8097454309084ab17f65ea8378aae2801a0149054bbc00b0ff60195fe4",
+    "README.md": "c3a8839fdd028bc53d2b59b29ebdf9532fe4bc2b45a46f122187e279cd033197",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/desklet.js": "19c677c02b9a6e0a6f39986bb98c1d7ee242449935ae49ebfda7298df3adf3a8",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/gridModel.js": "b33df9df28bc3a2d336d78688577953d12ee2c0ea976f764b8954abb83803677",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/icon.png": "9a16c33f68b4641664f771d2deeecea07c242312188ffb393d512e1b85612def",
@@ -15,13 +15,14 @@
     "files/cinnamon-workspace-grid-desklet@curbsoftware/workspaceActions.js": "61dc06fda8a73bcf77e2c82720143d8c90e89113d62eaa2b5b2a888a60a17059",
     "info.json": "0b8c18a03c477f48e482587029008263efa4c6b4ebfdd292de148674ba3fcf6d",
     "screenshot.png": "5589d1e43e386f133dc1fb0ebd0330e7d5e4219f080c0fbc44c426cd1fea6b76",
+    "screenshots/fulldesktop-workspace-grid.webp": "4c7e732fe37f3f5c88b0b2a5829b75b816001712ea6fb88776e2127cc20d3d88",
     "screenshots/workspace-grid-config.webp": "8d6ef2f86f98012082f7c6a021f78b3335561de7f454b6503598403d56c817ea",
     "screenshots/workspace-grid-desklet.webp": "2022c4ffe890766b972516804dea0c09fd79a9aa505950e966db8ea9b9f46807"
   },
   "schema": 1,
   "source_directory": "cinnamon-workspace-grid-desklet@curbsoftware",
   "source_repository": "CurbSoftware/cinnamon-monorepo",
-  "source_revision": "7963cd1b5fe2d836696e9804c363b2f018708e9e",
+  "source_revision": "8b66331a80bbc383578a82a628ec3689570ef93c",
   "source_worktree_dirty": false,
   "spice": {
     "alias": "workspace-grid",
