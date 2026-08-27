@@ -389,75 +389,80 @@ MyDesklet.prototype = {
         if (!workspace)
             return preview;
 
-        const monitorAreas = Main.layoutManager.monitors.map(function (monitor, position) {
-            const index = typeof monitor.index === "number" ? monitor.index : position;
-            return workspace.get_work_area_for_monitor(index);
-        });
-        const desktop = PreviewGeometry.boundingRect(monitorAreas) ||
-            workspace.get_work_area_all_monitors();
-        const viewport = PreviewGeometry.fitRect(desktop, previewWidth, previewHeight);
-        if (!viewport)
-            return preview;
+        try {
+            /* Copy layoutManager x/y/width/height. Do not re-query work
+             * areas by monitor.index: logical vs xinerama indices diverge
+             * on some multi-monitor boxes and stack or drop screens. */
+            const monitorAreas = PreviewGeometry.copyRects(
+                Main.layoutManager.monitors);
+            const desktop = PreviewGeometry.boundingRect(monitorAreas) ||
+                workspace.get_work_area_all_monitors();
+            const viewport = PreviewGeometry.fitRect(desktop, previewWidth, previewHeight);
+            if (!viewport)
+                return preview;
 
-        for (let monitorIndex = 0; monitorIndex < monitorAreas.length; monitorIndex++) {
-            const monitorRect = PreviewGeometry.projectRectInto(
-                monitorAreas[monitorIndex], desktop, viewport);
-            if (!monitorRect)
-                continue;
-            const monitorActor = new St.Widget({
-                style_class: "curb-workspace-grid-monitor",
-                reactive: false,
-                x: monitorRect.x,
-                y: monitorRect.y,
-                width: monitorRect.width,
-                height: monitorRect.height
-            });
-            preview.add_child(monitorActor);
-        }
-
-        const windows = this._getPreviewWindows(workspace);
-        const tracker = Cinnamon.WindowTracker.get_default();
-        const iconSize = Math.max(4, Math.min(24,
-            Math.floor(Math.min(previewWidth, previewHeight) * 0.16)));
-        for (let i = 0; i < windows.length; i++) {
-            const win = windows[i];
-            const rect = PreviewGeometry.projectRectInto(
-                win.get_buffer_rect(), desktop, viewport);
-            if (!rect)
-                continue;
-
-            /* St.DrawingArea can allocate a Cairo surface from this point to
-             * the stage edge when nested in a desklet FixedLayout. The actor
-             * allocation still looks correct, which hid the paint overflow
-             * from geometry tests. A themed actor has the same appearance and
-             * gives Clutter a genuinely bounded paint volume. */
-            const windowActor = new St.Widget({
-                style_class: "curb-workspace-grid-window " +
-                    (win.has_focus() ? "active" : "inactive"),
-                reactive: false,
-                x: rect.x,
-                y: rect.y,
-                width: rect.width,
-                height: rect.height
-            });
-            preview.add_child(windowActor);
-
-            const iconBox = PreviewGeometry.iconRect(rect, iconSize);
-            if (!iconBox)
-                continue;
-            const app = tracker.get_window_app(win);
-            let icon = app ? app.create_icon_texture_for_window(iconSize, win) : null;
-            if (!icon) {
-                icon = new St.Icon({
-                    icon_name: "applications-other",
-                    icon_type: St.IconType.FULLCOLOR,
-                    icon_size: iconSize
+            for (let monitorIndex = 0; monitorIndex < monitorAreas.length; monitorIndex++) {
+                const monitorRect = PreviewGeometry.projectRectInto(
+                    monitorAreas[monitorIndex], desktop, viewport);
+                if (!monitorRect)
+                    continue;
+                const monitorActor = new St.Widget({
+                    style_class: "curb-workspace-grid-monitor",
+                    reactive: false,
+                    x: monitorRect.x,
+                    y: monitorRect.y,
+                    width: monitorRect.width,
+                    height: monitorRect.height
                 });
+                preview.add_child(monitorActor);
             }
-            icon.reactive = false;
-            icon.set_position(iconBox.x, iconBox.y);
-            icon.set_size(iconSize, iconSize);
-            preview.add_child(icon);
+
+            const windows = this._getPreviewWindows(workspace);
+            const tracker = Cinnamon.WindowTracker.get_default();
+            const iconSize = Math.max(4, Math.min(24,
+                Math.floor(Math.min(previewWidth, previewHeight) * 0.16)));
+            for (let i = 0; i < windows.length; i++) {
+                const win = windows[i];
+                const rect = PreviewGeometry.projectRectInto(
+                    win.get_buffer_rect(), desktop, viewport);
+                if (!rect)
+                    continue;
+
+                /* St.DrawingArea can allocate a Cairo surface from this point to
+                 * the stage edge when nested in a desklet FixedLayout. The actor
+                 * allocation still looks correct, which hid the paint overflow
+                 * from geometry tests. A themed actor has the same appearance and
+                 * gives Clutter a genuinely bounded paint volume. */
+                const windowActor = new St.Widget({
+                    style_class: "curb-workspace-grid-window " +
+                        (win.has_focus() ? "active" : "inactive"),
+                    reactive: false,
+                    x: rect.x,
+                    y: rect.y,
+                    width: rect.width,
+                    height: rect.height
+                });
+                preview.add_child(windowActor);
+
+                const iconBox = PreviewGeometry.iconRect(rect, iconSize);
+                if (!iconBox)
+                    continue;
+                const app = tracker.get_window_app(win);
+                let icon = app ? app.create_icon_texture_for_window(iconSize, win) : null;
+                if (!icon) {
+                    icon = new St.Icon({
+                        icon_name: "applications-other",
+                        icon_type: St.IconType.FULLCOLOR,
+                        icon_size: iconSize
+                    });
+                }
+                icon.reactive = false;
+                icon.set_position(iconBox.x, iconBox.y);
+                icon.set_size(iconSize, iconSize);
+                preview.add_child(icon);
+            }
+        } catch (e) {
+            global.logError(uuid + " preview failed: " + e);
         }
         return preview;
     },

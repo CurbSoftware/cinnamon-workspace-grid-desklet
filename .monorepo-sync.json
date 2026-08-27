@@ -3,12 +3,12 @@
   "managed_files": {
     "LICENSE": "68538b8fb86bf1fce73a988c4c663dd599b47e96893d4f3ea14df1991533560d",
     "README.md": "a9c82e8097454309084ab17f65ea8378aae2801a0149054bbc00b0ff60195fe4",
-    "files/cinnamon-workspace-grid-desklet@curbsoftware/desklet.js": "fa6d37159e7b9e6a18c69128473c073f19448ad49ee8a669b502c371e472ac65",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/desklet.js": "19c677c02b9a6e0a6f39986bb98c1d7ee242449935ae49ebfda7298df3adf3a8",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/gridModel.js": "b33df9df28bc3a2d336d78688577953d12ee2c0ea976f764b8954abb83803677",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/icon.png": "9a16c33f68b4641664f771d2deeecea07c242312188ffb393d512e1b85612def",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/metadata.json": "36754c12a05562c5067362add50824f067b723fa04bf2af90bb8598386de1ac9",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/po/cinnamon-workspace-grid-desklet@curbsoftware.pot": "bf96eeb3a9b7e19b9ede944005a92cff7b7d3d0c7225dfee87eb4f4a5ee287ab",
-    "files/cinnamon-workspace-grid-desklet@curbsoftware/previewGeometry.js": "ada44dbbb2f5362732ae9a54e65408af5ef1fd3021b2b6c63dc6616bba13b6dd",
+    "files/cinnamon-workspace-grid-desklet@curbsoftware/previewGeometry.js": "115dedebe83cf8d898a19b3e6f87ff442bd5f5c2fae18b428fbb6712a4d56b21",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/renameDialog.js": "793ca4c9acb1f5aa75d557fbdc590f2d84965fa9e3486ac51ae73c33e5cbe376",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/settings-schema.json": "1cc45755252490d1371e8203236549f6ff609bb138202ee635d262b592af6892",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/stylesheet.css": "a1adf75f39dfa03303c4c2b320e0c185d5f1487b903a3577d3551816230ebb70",
@@ -21,7 +21,7 @@
   "schema": 1,
   "source_directory": "cinnamon-workspace-grid-desklet@curbsoftware",
   "source_repository": "CurbSoftware/cinnamon-monorepo",
-  "source_revision": "09ab503f96e6742e62c6493c6da8c5b965ebff10",
+  "source_revision": "7963cd1b5fe2d836696e9804c363b2f018708e9e",
   "source_worktree_dirty": false,
   "spice": {
     "alias": "workspace-grid",

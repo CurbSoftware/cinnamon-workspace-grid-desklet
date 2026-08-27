@@ -14,11 +14,16 @@ function normalizeRect(rect) {
     };
 }
 
-/** Returns the smallest rectangle containing every non-empty rectangle. */
-function boundingRect(rects) {
-    const areas = (rects || []).map(normalizeRect).filter(function (rect) {
+/** Copies finite rects and drops empty ones. LayoutManager monitors work here. */
+function copyRects(rects) {
+    return (rects || []).map(normalizeRect).filter(function (rect) {
         return rect.width > 0 && rect.height > 0;
     });
+}
+
+/** Returns the smallest rectangle containing every non-empty rectangle. */
+function boundingRect(rects) {
+    const areas = copyRects(rects);
     if (!areas.length)
         return null;
 
