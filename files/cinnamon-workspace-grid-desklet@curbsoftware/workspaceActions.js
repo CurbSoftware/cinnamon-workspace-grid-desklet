@@ -3,7 +3,7 @@
  * workspaceActions.js
  *
  * All workspace mutation logic for the Workspace Grid desklet and the
- * Workspace Name applet. Deliberately contains no St/Clutter widgets so the
+ * In Panel Workspace Name applet. Deliberately contains no St/Clutter widgets so the
  * pure parts can be exercised by a headless test harness (libst.so cannot
  * be loaded outside the Cinnamon process).
  *
