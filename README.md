@@ -4,6 +4,14 @@ Workspace Grid provides a named, clickable workspace grid on the desktop.
 Choose simple name tiles or desktop previews showing visible windows and app
 icons. Both modes retain workspace names and active workspace highlighting.
 
+## Screenshots
+
+![Workspace Grid desklet](screenshots/workspace-grid-desklet.webp)
+
+The settings window:
+
+![Workspace Grid settings](screenshots/workspace-grid-config.webp)
+
 ## Features
 
 - One clickable tile per workspace
