@@ -9,7 +9,6 @@ const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
 const Pango = imports.gi.Pango;
 const SignalManager = imports.misc.signalManager;
-const Tooltips = imports.ui.tooltips;
 const Gettext = imports.gettext;
 const GLib = imports.gi.GLib;
 
@@ -86,11 +85,17 @@ MyDesklet.prototype = {
          * parented to Main.uiGroup, so destroy_all_children() on our own
          * container will never reach them - they must be released by hand. */
         this._tileMenu = null;
+        this._addTile = null;
 
         /* Pending idle sources created by _deferAction(). */
         this._idleSources = [];
 
         this._rebuildTimeout = null;
+        this._skipTileClick = false;
+        this._skipTileClickTimeout = null;
+        this._dragBeginId = 0;
+        this._dragEndId = 0;
+        this._dragCancelId = 0;
         this.scroll_id = null;
         this.ws_name_id = null;
         this._lastSwitchTime = 0;
@@ -107,6 +112,7 @@ MyDesklet.prototype = {
         this.mainContainer.set_height(this.height || 400);
 
         this.setContent(this.mainContainer);
+        this._connectDragOwnership();
 
         this._signalManager.connect(global.window_manager, 'switch-workspace', this._update, this);
 
@@ -133,6 +139,7 @@ MyDesklet.prototype = {
         this._cleanedUp = true;
 
         this._destroyTileMenu();
+        this._disconnectDragOwnership();
 
         if (this._idleSources) {
             for (let i = 0; i < this._idleSources.length; i++)
@@ -161,6 +168,106 @@ MyDesklet.prototype = {
             this.disconnect(this._destroyId);
             this._destroyId = 0;
         }
+    },
+
+    /* Public DND signals only. Never change private draggable state
+     * or synthesize a pointer release. */
+    _connectDragOwnership: function () {
+        if (!this._draggable || this._dragBeginId)
+            return;
+        this._dragBeginId = this._draggable.connect("drag-begin", () => {
+            this._skipTileClick = true;
+        });
+        const clearSoon = () => this._clearSkipTileClickSoon();
+        this._dragEndId = this._draggable.connect("drag-end", clearSoon);
+        this._dragCancelId = this._draggable.connect("drag-cancelled", clearSoon);
+    },
+
+    _disconnectDragOwnership: function () {
+        if (this._skipTileClickTimeout) {
+            Mainloop.source_remove(this._skipTileClickTimeout);
+            this._skipTileClickTimeout = null;
+        }
+        this._skipTileClick = false;
+        if (!this._draggable)
+            return;
+        if (this._dragBeginId) {
+            this._draggable.disconnect(this._dragBeginId);
+            this._dragBeginId = 0;
+        }
+        if (this._dragEndId) {
+            this._draggable.disconnect(this._dragEndId);
+            this._dragEndId = 0;
+        }
+        if (this._dragCancelId) {
+            this._draggable.disconnect(this._dragCancelId);
+            this._dragCancelId = 0;
+        }
+    },
+
+    _clearSkipTileClickSoon: function () {
+        if (this._skipTileClickTimeout)
+            Mainloop.source_remove(this._skipTileClickTimeout);
+        this._skipTileClickTimeout = Mainloop.timeout_add(0, () => {
+            this._skipTileClickTimeout = null;
+            this._skipTileClick = false;
+            return false;
+        });
+    },
+
+    _tileAtEvent: function (event) {
+        if (!event)
+            return null;
+        let x;
+        let y;
+        try {
+            const coords = event.get_coords();
+            x = coords[0];
+            y = coords[1];
+        } catch (e) {
+            return null;
+        }
+        const tiles = this.buttons ? this.buttons.slice() : [];
+        if (this._addTile)
+            tiles.push(this._addTile);
+        for (let i = 0; i < tiles.length; i++) {
+            const actor = tiles[i];
+            try {
+                const pos = actor.get_transformed_position();
+                const size = actor.get_transformed_size();
+                if (x >= pos[0] && y >= pos[1] &&
+                        x < pos[0] + size[0] && y < pos[1] + size[1])
+                    return actor;
+            } catch (e) {}
+        }
+        return null;
+    },
+
+    _activateTile: function (tile) {
+        if (!tile)
+            return;
+        if (tile._isAddTile)
+            this._onAddWorkspace();
+        else
+            this._onWorkspaceButtonClicked(tile, 1);
+    },
+
+    _onButtonReleaseEvent: function (actor, event) {
+        if (this._skipTileClick) {
+            this._skipTileClick = false;
+            return false;
+        }
+        const tile = this._tileAtEvent(event);
+        const button = event.get_button();
+        if (tile && button === 1) {
+            this._activateTile(tile);
+            return false;
+        }
+        if (tile && button === 3 && this.enableEditing && !tile._isAddTile) {
+            this._onWorkspaceButtonClicked(tile, 3);
+            return false;
+        }
+        return Desklet.Desklet.prototype._onButtonReleaseEvent.call(this, actor, event);
     },
 
     _onScrollSettingChanged: function () {
@@ -245,6 +352,7 @@ MyDesklet.prototype = {
 
             /* reset list & compute target dimensions */
             this.buttons = [];
+            this._addTile = null;
 
             const wsCount = this._getWorkspaceCount();
             const showAdd = !!(this.enableEditing && this.showAddTile && WorkspaceActions.canAdd());
@@ -277,9 +385,13 @@ MyDesklet.prototype = {
                 compact: compact
             };
 
+            /* Tile surfaces stay non-reactive so Cinnamon owns desklet DND.
+             * St.Button grabs the pointer; a lost release over another desklet
+             * or off-monitor then sticks the desklet to the cursor until a
+             * Cinnamon restart. Clicks are hit-tested on the desklet actor. */
             const table = new St.Table({
                 homogeneous: true,
-                reactive: true,
+                reactive: false,
                 clip_to_allocation: true,
                 style_class: "curb-workspace-grid-table"
             });
@@ -308,16 +420,12 @@ MyDesklet.prototype = {
     },
 
     _createWorkspaceTile: function (index, layout) {
-        const button = new St.Button({
+        const button = new St.Bin({
             style_class: 'curb-workspace-grid-button',
-            reactive: true,
-            can_focus: true,
-            track_hover: true
+            reactive: false,
+            x_fill: true,
+            y_fill: true
         });
-        /* Accept right-click too, so a tile can raise its own context menu.
-         * St.Button consumes the release, so the Desklet base class right-click
-         * handler does not also open the desklet menu. */
-        button.set_button_mask(St.ButtonMask.ONE | St.ButtonMask.THREE);
 
         const name = this._getWorkspaceName(index);
         const content = new St.BoxLayout({
@@ -352,10 +460,7 @@ MyDesklet.prototype = {
         button.index = index;
         button.set_accessible_name(_("Workspace %d: %s").format(index + 1,
             WorkspaceActions.getWorkspaceName(index)));
-        button.connect('clicked', this._onWorkspaceButtonClicked.bind(this));
         button.set_style("margin:" + layout.tileMargin + "px;");
-
-        this._tooltips.push(new Tooltips.Tooltip(button, WorkspaceActions.getWorkspaceName(index)));
 
         this.buttons.push(button);
         return button;
@@ -478,20 +583,38 @@ MyDesklet.prototype = {
     },
 
     _createAddTile: function (layout) {
-        const button = new St.Button({
+        /* Non-reactive so Cinnamon owns DND. Do not fill the child: that
+         * stretched the label and left a tiny centered plus. */
+        const button = new St.Bin({
             style_class: 'curb-workspace-grid-add-tile',
-            reactive: true,
-            can_focus: true,
-            accessible_name: _("Add workspace")
+            reactive: false,
+            x_fill: false,
+            y_fill: false,
+            x_align: St.Align.MIDDLE,
+            y_align: St.Align.MIDDLE
         });
         const label = new St.Label({
             text: "+",
-            style_class: 'curb-workspace-grid-add-label'
+            style_class: 'curb-workspace-grid-add-label',
+            x_align: Clutter.ActorAlign.CENTER,
+            y_align: Clutter.ActorAlign.CENTER
         });
+        try {
+            label.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
+            label.clutter_text.line_wrap = false;
+            label.clutter_text.set_line_alignment(Pango.Alignment.CENTER);
+        } catch (e) {}
+        const margin = Math.max(0, layout.tileMargin || 0);
+        const innerW = Math.max(12, layout.cellWidth - 2 * margin - 8);
+        const innerH = Math.max(12, layout.cellHeight - 2 * margin - 8);
+        const pt = Math.max(18, Math.min(48, Math.round(
+            Math.min(innerH * 0.45, innerW * 0.7) * 0.75)));
+        label.set_style("font-size: " + pt + "pt; font-weight: 600;");
         button.set_child(label);
-        button.connect('clicked', this._onAddWorkspace.bind(this));
+        button._isAddTile = true;
+        button.set_accessible_name(_("Add workspace"));
         button.set_style("margin:" + layout.tileMargin + "px;");
-        this._tooltips.push(new Tooltips.Tooltip(button, _("Add workspace")));
+        this._addTile = button;
         return button;
     },
 
@@ -505,6 +628,8 @@ MyDesklet.prototype = {
 
     _onWorkspaceButtonClicked: function (actor, clickedButton) {
         try {
+            if (!actor)
+                return;
             if (clickedButton === 3) {
                 if (this.enableEditing)
                     this._openTileMenu(actor);
