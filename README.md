@@ -45,8 +45,9 @@ No root needed. Everything installs into your home directory.
 From a release package:
 
 ```bash
-curl -fLO https://github.com/RobertAlexanderH/cinnamon-workspace-grid-desklet/releases/latest/download/cinnamon-workspace-grid-desklet.zip
-unzip cinnamon-workspace-grid-desklet.zip
+curl -fLO https://github.com/CurbSoftware/cinnamon-workspace-grid-desklet/releases/latest/download/cinnamon-workspace-grid-desklet.zip
+unzip -o cinnamon-workspace-grid-desklet.zip
+mkdir -p ~/.local/share/cinnamon/desklets
 rm -rf ~/.local/share/cinnamon/desklets/cinnamon-workspace-grid-desklet@curbsoftware
 cp -r cinnamon-workspace-grid-desklet@curbsoftware/files/cinnamon-workspace-grid-desklet@curbsoftware \
    ~/.local/share/cinnamon/desklets/cinnamon-workspace-grid-desklet@curbsoftware
@@ -55,8 +56,9 @@ cp -r cinnamon-workspace-grid-desklet@curbsoftware/files/cinnamon-workspace-grid
 Or straight from git:
 
 ```bash
-git clone https://github.com/RobertAlexanderH/cinnamon-workspace-grid-desklet.git
+git clone https://github.com/CurbSoftware/cinnamon-workspace-grid-desklet.git || git -C cinnamon-workspace-grid-desklet pull
 cd cinnamon-workspace-grid-desklet
+mkdir -p ~/.local/share/cinnamon/desklets
 rm -rf ~/.local/share/cinnamon/desklets/cinnamon-workspace-grid-desklet@curbsoftware
 cp -r files/cinnamon-workspace-grid-desklet@curbsoftware \
    ~/.local/share/cinnamon/desklets/cinnamon-workspace-grid-desklet@curbsoftware

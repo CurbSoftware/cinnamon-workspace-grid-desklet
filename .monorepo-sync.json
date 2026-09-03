@@ -2,7 +2,7 @@
   "generator": "dev-tools/sync-spice-project.py",
   "managed_files": {
     "LICENSE": "68538b8fb86bf1fce73a988c4c663dd599b47e96893d4f3ea14df1991533560d",
-    "README.md": "afe57e15089b1bdb7545a3e20ac9f6ec69a76b7bf8af0a14e8678003181bbbed",
+    "README.md": "967d6bf53f85b1bdd67408f3b3ae23a33af646f248cf9f9d15867a93287eee01",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/desklet.js": "f45a5f4a2c5a6896409c3ee9efb69c759e4620427e9e5c1213b01d9933469dcf",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/gridModel.js": "b33df9df28bc3a2d336d78688577953d12ee2c0ea976f764b8954abb83803677",
     "files/cinnamon-workspace-grid-desklet@curbsoftware/icon.png": "9a16c33f68b4641664f771d2deeecea07c242312188ffb393d512e1b85612def",
@@ -22,7 +22,7 @@
   "schema": 1,
   "source_directory": "cinnamon-workspace-grid-desklet@curbsoftware",
   "source_repository": "CurbSoftware/cinnamon-monorepo",
-  "source_revision": "450936c0e5552812d9df7a67818dd039e7b6f4fb",
+  "source_revision": "00f77c1da659bd20687bb3b290cad14757dcfcb5",
   "source_worktree_dirty": false,
   "spice": {
     "alias": "workspace-grid",
