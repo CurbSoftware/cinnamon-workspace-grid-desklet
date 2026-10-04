@@ -1,3 +1,7 @@
+# Do Not Use
+
+Project merged to https://github.com/CurbSoftware/desktop-xlets.
+
 # Workspace Grid Desklet
 
 Workspace Grid provides a named, clickable workspace grid on the desktop.
